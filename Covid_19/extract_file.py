@@ -13,7 +13,7 @@ from time import time
    '''
 
 def main():
-    credentials_path = "/Users/httran/Documents/Programming/Credentials_Repo"
+    credentials_path = "/Users/httran/Documents/Programming/Credentials_Repo/"
     credentials = pd.read_csv(credentials_path + 'user_credentials.csv')
     aws_key = str(credentials['Access key ID'][0])
     aws_secret_key = credentials['Secret access key'][0]
@@ -47,7 +47,6 @@ def main():
         url = f'https://data.cdc.gov/resource/9bhg-hcku.json?$limit={limit}&$offset={index_pos}&$order=data_as_of'
         result = requests.get(url)
         data = result.json()
-        #print(data)
         df = pd.DataFrame(data)
         file_name = f'covid19data_row{index_pos}.csv'
         df.to_csv(file_name)
