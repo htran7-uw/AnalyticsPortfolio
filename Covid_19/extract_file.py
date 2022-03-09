@@ -48,6 +48,13 @@ def main():
         result = requests.get(url)
         data = result.json()
         df = pd.DataFrame(data)
+        if "month" not in df.columns:
+            df['month'] = None
+        if "year" not in df.columns:
+            df['year'] = None
+        sorted_cols = sorted(df.columns)
+        df = df[sorted_cols]
+        print(df.columns)
         file_name = f'covid19data_row{index_pos}.csv'
         df.to_csv(file_name)
         s3.upload_file(file_name, Bucket='htran-covid-project', Key=file_name)
