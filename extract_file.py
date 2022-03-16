@@ -12,7 +12,8 @@ from time import time
    leading up to 82,426. The last file should have 2,426.
    '''
 
-def main(): #hello
+
+def main():  # hello
     credentials_path = "/Users/httran/Documents/Programming/Credentials_Repo/"
     credentials = pd.read_csv(credentials_path + 'user_credentials.csv')
     aws_key = str(credentials['Access key ID'][0])
@@ -21,7 +22,7 @@ def main(): #hello
     s3 = boto3.client('s3', region_name='us-east-1', aws_access_key_id=aws_key, aws_secret_access_key=aws_secret_key)
 
     '''Create the bucket'''
-    #s3.create_bucket(Bucket='htran-covid-project')
+    # s3.create_bucket(Bucket='htran-covid-project')
 
     '''Get the count of rows for the dataset. Get the limit and offset parameters. 
     Get the limit and offset parameter for each url. Extract that and convert to a csv.
@@ -41,7 +42,7 @@ def main(): #hello
         i += 10000
     offset[-1] = num_rows
 
-    #example url: https://soda.demo.socrata.com/resource/earthquakes.json?$limit=5&$offset=0$order=data_as_of
+    # example url: https://soda.demo.socrata.com/resource/earthquakes.json?$limit=5&$offset=0$order=data_as_of
     for index_pos in offset:
         t0 = time()
         url = f'https://data.cdc.gov/resource/9bhg-hcku.json?$limit={limit}&$offset={index_pos}&$order=data_as_of'
@@ -54,12 +55,14 @@ def main(): #hello
             df['year'] = None
         sorted_cols = sorted(df.columns)
         df = df[sorted_cols]
-        print(df.columns)
+        #print(df.columns)
         file_name = f'covid19data_row{index_pos}.csv'
         df.to_csv(file_name)
-        s3.upload_file(file_name, Bucket='htran-covid-project', Key=file_name)
+
+        #code from https://stackoverflow.com/questions/41904806/how-to-upload-a-file-to-s3-and-make-it-public-using-boto3
+        s3.upload_file(file_name, Bucket='htran-covid-project', Key=file_name, ExtraArgs = {'ACL': 'public-read'})
         t1 = time()
-        total_time = round((t1 - t0),2)
+        total_time = round((t1 - t0), 2)
         print(f'Total time to upload {file_name} was {total_time} seconds.')
         if os.path.exists(file_name):
             os.remove(file_name)
@@ -71,5 +74,5 @@ if __name__ == '__main__':
     t_start = time()
     main()
     t_finish = time()
-    total_overall = round(t_finish - t_start,2)
+    total_overall = round(t_finish - t_start, 2)
     print(f'Successfully uploaded all files. Total time to finish the script was {total_overall} seconds')
