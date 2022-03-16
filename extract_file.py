@@ -76,3 +76,4 @@ if __name__ == '__main__':
     t_finish = time()
     total_overall = round(t_finish - t_start, 2)
     print(f'Successfully uploaded all files. Total time to finish the script was {total_overall} seconds')
+

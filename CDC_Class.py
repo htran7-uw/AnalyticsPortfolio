@@ -21,8 +21,8 @@ class CDC_URL:
         elif self.num_rows >= 10000 and self.num_rows < 50000:
             parse_list = []
             for i in range(1, 6):
-                if num_rows / i < 10000:  # see which number of parts results in less than 10,000 rows
-                    parse_list.append(num_rows // i)  # take the floor division result and add it to parse list
+                if self.num_rows / i < 10000:  # see which number of parts results in less than 10,000 rows
+                    parse_list.append(self.num_rows // i)  # take the floor division result and add it to parse list
             parse = max(parse_list)  # take the maximum of this list because I want the fewest files... less time
             # print(parse)
 
@@ -57,6 +57,9 @@ class CDC_URL:
                 url_list.append(f'{self.url}?$limit={parse}&$offset={pos}')
 
             return url_list
+        elif self.num_rows > 200000:
+            raise Exception('Row limit exceeded!')
+
 
     def __len__(self):
         return len(self.url_list)
